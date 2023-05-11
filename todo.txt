@@ -1,0 +1,10 @@
+Workflow
+split song into parts
+lyrics get transcribed (either line or word)
+get data from all the parts
+    maybe get beats from bass and drums(maybe get beat from before the splitting)
+create output which is the stuff to either paste into auto1111 or actual code that makes the video
+
+todo
+maybe change out termina commands in main.py for their actual python code
+get individual word timing
