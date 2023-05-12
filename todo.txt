@@ -6,5 +6,11 @@ get data from all the parts
 create output which is the stuff to either paste into auto1111 or actual code that makes the video
 
 todo
-maybe change out termina commands in main.py for their actual python code
+maybe change out terminal commands in main.py for their actual python code
 get individual word timing
+
+
+i need to get full prompts for each word in the song. I probably need to show some examples of good prompts. this can be done a number of ways, i could show it examples, then ask for the 
+
+
+look into having prompts being written locally by a smaller LLM, it would be nice to get everything local
