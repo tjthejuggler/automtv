@@ -14,3 +14,11 @@ i need to get full prompts for each word in the song. I probably need to show so
 
 
 look into having prompts being written locally by a smaller LLM, it would be nice to get everything local
+
+make it check to see if things exist before it does them, if they do, just use what is there to complete the task
+
+there can be a force overwrite option that 
+
+
+
+layered prompting that fades words in and out of the prompt over time to make it predict each word visually
