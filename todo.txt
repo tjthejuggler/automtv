@@ -22,3 +22,9 @@ there can be a force overwrite option that
 
 
 layered prompting that fades words in and out of the prompt over time to make it predict each word visually
+
+it should never give me more than one key with same timestamp, i think its causing crash
+
+for a given song, if a word is colorless, then maybe that word should be given a color for that song
+
+is there a library that can detect rhymme sets?

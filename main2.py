@@ -1,13 +1,13 @@
 import subprocess
 import whisper_timestamped as whisper
 import json
+import os
 
-song_filename = "logical"
-fps = 20
+song_filename = "died"
+
 frames_before_prompt = 3
 frames_after_prompt = 1
-use_predictive_prompting = True
-make_juggling = True
+
 juggling_word_beginning_to_end = False
 
 def do_terminal_command(command):
@@ -88,19 +88,34 @@ def append_next_five_values(d):
         result[key] = new_value
     return result
 
-def ask_gpt_words_color(word):
-    color = ""
+def save_transcription_to_file(transcription_dict, song_filename):
+    output_path = "./outputs/" + song_filename + "/transcription.json"
+    with open(output_path, "w") as outfile:    
+        json.dump(transcription_dict, outfile, indent=4)
+        print("Transcription saved to: ", output_path)
 
-    return color
+def save_settings_to_file(strength_values, output, juggling_codes, song_filename):
+    settings_dir = "./outputs/" + song_filename + "/settings"
+    if not os.path.exists(settings_dir):
+        os.makedirs(settings_dir)
+
+    with open(settings_dir + "/strength_values.txt", "w") as outfile:
+        outfile.write(str(strength_values))
+
+    with open(settings_dir + "/output.txt", "w") as outfile:
+        outfile.write("\n\n\n"+json.dumps(output, indent = 2, ensure_ascii = False))
+
+    with open(settings_dir + "/juggling_codes.txt", "w") as outfile:
+        outfile.write("\n\n\n"+json.dumps(juggling_codes, indent = 2, ensure_ascii = False))
 
 def get_words_color(word):
-    with open("./word_color_dictionary.json", "r") as infile:
+    with open("./word_color_dictionary.txt", "r") as infile:
         local_word_color_dictionary = json.load(infile)
 
     if local_word_color_dictionary[word] == None:
         local_word_color_dictionary[word] = ask_gpt_words_color(word)
 
-    with open("./word_color_dictionary.json", "w") as outfile:
+    with open("./word_color_dictionary.txt", "w") as outfile:
         json.dump(local_word_color_dictionary, outfile, indent=4)
 
     return local_word_color_dictionary[word]
@@ -112,53 +127,44 @@ def calculate_juggling_codes(frame_dict, juggling_word_beginning_to_end):
         juggling_codes[key] = words_color
     return juggling_codes
 
-create_song_folder(song_filename)
-run_spleeter_command(song_filename)
-transcription_dict = transcribe_vocals(song_filename)
+def ask_gpt_words_color(word):
+    color = ""
 
-# Save transcription to file
-output_path = "./outputs/" + song_filename + "/transcription.json"
-with open(output_path, "w") as outfile:    
-    json.dump(transcription_dict, outfile, indent=4)
-    print("Transcription saved to: ", output_path)
+    return color
 
-frame_dict, strength_values = convert_to_frame_dict(transcription_dict, fps)
-
-# Create a new dictionary with string keys and string values
-string_keys_dict = {str(k): v for k, v in frame_dict.items()}
-
-# Convert the dictionary to a pretty formatted string
-pretty_dict_string = json.dumps(string_keys_dict, indent=4)
-
-print(json.dumps(transcription_dict, indent = 2, ensure_ascii = False))
-
-print(pretty_dict_string)
-#if use_predictive_prompting:
-output= append_next_five_values(frame_dict)
-
-print(json.dumps(output, indent = 2, ensure_ascii = False))
-
-#print(transcription_dict)
-
-print("\n\n\n"+strength_values)
-juggling_codes = {}
-if make_juggling:
-    juggling_codes = calculate_juggling_codes(frame_dict, juggling_word_beginning_to_end)
-
-
-
-#save strength_values and output to a file
-with open("./outputs/" + song_filename + "/settings/strength_vlues.txt", "w") as outfile:
-    outfile.write(str(strength_values))
-
-with open("./outputs/" + song_filename + "/settings/output.txt", "w") as outfile:
-    outfile.write("\n\n\n"+json.dumps(output, indent = 2, ensure_ascii = False))
-
-with open("./outputs/" + song_filename + "/settings/juggling_codes.txt", "w") as outfile:
-    outfile.write("\n\n\n"+json.dumps(juggling_codes, indent = 2, ensure_ascii = False))
+def main():
     
+    fps = 20
+    use_predictive_prompting = True
+    make_juggling = True
 
+    create_song_folder(song_filename)
+    run_spleeter_command(song_filename)
+    transcription_dict = transcribe_vocals(song_filename)
+    save_transcription_to_file(transcription_dict, song_filename)
 
+    frame_dict, strength_values = convert_to_frame_dict(transcription_dict, fps)
 
+    # Create a new dictionary with string keys and string values
+    string_keys_dict = {str(k): v for k, v in frame_dict.items()}
 
+    # Convert the dictionary to a pretty formatted string
+    pretty_dict_string = json.dumps(string_keys_dict, indent=4)
 
+    print(json.dumps(transcription_dict, indent=2, ensure_ascii=False))
+    print(pretty_dict_string)
+
+    #if use_predictive_prompting:
+    output = append_next_five_values(frame_dict)
+    print(json.dumps(output, indent=2, ensure_ascii=False))
+
+    print("\n\n\n"+strength_values)
+
+    juggling_codes = {}
+    if make_juggling:
+        juggling_codes = calculate_juggling_codes(frame_dict, juggling_word_beginning_to_end)
+
+    save_settings_to_file(strength_values, output, juggling_codes, song_filename)
+
+if __name__ == "__main__":
+    main()
